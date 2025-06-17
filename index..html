@@ -1,0 +1,166 @@
+<!DOCTYPE html><html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>الوردة الحمراء - مؤقت الدراسة</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1e1e1e, #3a0d0d);
+      color: white;
+      font-family: 'Cairo', sans-serif;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }.rose {
+  width: 150px;
+  transition: all 0.5s ease-in-out;
+}
+
+.timer {
+  font-size: 3em;
+  margin: 20px 0;
+}
+
+.controls {
+  margin-top: 20px;
+}
+
+.controls button {
+  padding: 10px 20px;
+  font-size: 1.1em;
+  margin: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: crimson;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.controls button:hover {
+  background-color: #ff1e56;
+}
+
+.dead {
+  filter: grayscale(100%) brightness(0.6);
+  transform: rotate(-20deg) scale(0.8);
+}
+
+.fireworks {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  background: url('https://media.giphy.com/media/3o6ZsYm5wX9FptZbak/giphy.gif') center/cover no-repeat;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+  z-index: 999;
+}
+
+footer {
+  position: absolute;
+  bottom: 10px;
+  font-size: 0.9em;
+}
+
+  </style>
+</head>
+<body>
+  <h1>🌹 الوردة الحمراء</h1>
+  <img src="https://i.imgur.com/Abn5DwH.png" alt="Red Rose" class="rose" id="rose" />
+  <div class="timer" id="timer">00:00</div>
+  <div class="controls">
+    <button onclick="startCustomTimer()">اختار وقتك</button>
+    <button onclick="startRandomTimer()">خلي الوردة تختار</button>
+  </div>
+  <div class="fireworks" id="fireworks"></div>
+  <footer>Made by Omar Alhlal | Instagram: <a href="https://instagram.com/wh3.t" style="color: #f88;">@wh3.t</a></footer>  <script>
+    let timerInterval;
+    let timeLeft = 0;
+    let tabHiddenTime = null;
+    const rose = document.getElementById("rose");
+    const timerDisplay = document.getElementById("timer");
+    const words = [
+      "وينك! 😡",
+      "ليش طلعت؟ 🌪️",
+      "الوردة زعلت 😭",
+      "كنت محتاجك! 🌹",
+      "هذا مش عدل! 💔",
+      "راجع بسرعة 😤",
+      "مو هيك الاتفاق! 😡",
+      "انا تعبت منك 😢",
+      "ليش تعمل هيك؟ 😞",
+      "انت اناني! 💢",
+      "اهملتني! 😢",
+      "خنت ثقتي 😔",
+      "ما كنت اتوقع منك هيك 😢",
+      "ارجعلي 😭",
+      "كل مرة نفس الشي؟ 💔",
+      "شكلي كنت غلطانة فيك 😩",
+      "وين الوفا؟ 💀",
+      "خلاص الوردة ماتت 😵",
+      "انتهى الامل فيك 💔",
+      "الى اللقاء يا خائن 💀"
+    ];
+
+    function startCustomTimer() {
+      let minutes = prompt("كم عدد الدقائق؟");
+      if (minutes && !isNaN(minutes)) {
+        startTimer(parseInt(minutes) * 60);
+      }
+    }
+
+    function startRandomTimer() {
+      let min = 15 * 60;
+      let max = 90 * 60;
+      let randomSeconds = Math.floor(Math.random() * (max - min + 1)) + min;
+      startTimer(randomSeconds);
+    }
+
+    function startTimer(seconds) {
+      clearInterval(timerInterval);
+      timeLeft = seconds;
+      updateDisplay();
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateDisplay();
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          celebrate();
+        }
+      }, 1000);
+    }
+
+    function updateDisplay() {
+      let mins = Math.floor(timeLeft / 60);
+      let secs = timeLeft % 60;
+      timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && timeLeft > 0) {
+        rose.classList.add("dead");
+        alert(words[Math.floor(Math.random() * words.length)]);
+      } else if (!document.hidden && timeLeft > 0) {
+        rose.classList.remove("dead");
+      }
+    });
+
+    function celebrate() {
+      const fireworks = document.getElementById("fireworks");
+      fireworks.style.opacity = 1;
+      setTimeout(() => {
+        fireworks.style.opacity = 0;
+        alert("🎉 مبروك! انهيت الوقت والوردة فرحانة فيك! 🌹");
+      }, 4000);
+    }
+  </script></body>
+</html>
