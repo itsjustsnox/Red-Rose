@@ -1,167 +1,53 @@
-<!DOCTYPE html><html lang="ar">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>الوردة الحمراء - مؤقت الدراسة</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #1e1e1e, #3a0d0d);
-      color: white;
-      font-family: 'Cairo', sans-serif;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
-    }.rose {
-  width: 150px;
-  transition: all 0.5s ease-in-out;
-}
+import React, { useState } from 'react'; import { Card, CardContent } from "@/components/ui/card"; import { Input } from "@/components/ui/input"; import { Button } from "@/components/ui/button"; import { Textarea } from "@/components/ui/textarea"; import { Loader, Camera } from 'lucide-react'; import { motion } from 'framer-motion';
 
-.timer {
-  font-size: 3em;
-  margin: 20px 0;
-}
+const languages = [ { code: 'en', name: 'English' }, { code: 'ar', name: 'Arabic' }, { code: 'fr', name: 'French' }, { code: 'es', name: 'Spanish' }, { code: 'zh', name: 'Chinese' }, { code: 'ru', name: 'Russian' }, { code: 'de', name: 'German' }, { code: 'hi', name: 'Hindi' }, ];
 
-.controls {
-  margin-top: 20px;
-}
+export default function TranslatorApp() { const [text, setText] = useState(''); const [translations, setTranslations] = useState([]); const [loading, setLoading] = useState(false);
 
-.controls button {
-  padding: 10px 20px;
-  font-size: 1.1em;
-  margin: 10px;
-  border: none;
-  border-radius: 8px;
-  background-color: crimson;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
+const translateToAll = async () => { setLoading(true); const fakeTranslate = (text, lang) => ${text} (${lang.name}); // Replace with real API const result = languages.map(lang => ({ lang: lang.name, translation: fakeTranslate(text, lang) })); setTranslations(result); setLoading(false); };
 
-.controls button:hover {
-  background-color: #ff1e56;
-}
+return ( <main className="min-h-screen bg-gradient-to-br from-[#1c1c2c] to-[#3c3c64] text-white p-6"> <div className="max-w-4xl mx-auto"> <motion.h1 className="text-4xl font-bold mb-6 text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}> 🌐 Ultra Translator Pro </motion.h1>
 
-.dead {
-  filter: grayscale(100%) brightness(0.6);
-  transform: rotate(-20deg) scale(0.8);
-}
+<Card className="bg-[#2b2b44] shadow-xl rounded-2xl">
+      <CardContent className="space-y-4 p-6">
+        <Textarea
+          placeholder="اكتب أي شيء للترجمة..."
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          className="text-base bg-[#1f1f33] text-white border-none focus:ring-2 focus:ring-indigo-400"
+        />
+        <Button onClick={translateToAll} disabled={loading} className="w-full bg-indigo-500 hover:bg-indigo-600">
+          {loading ? <Loader className="animate-spin" /> : 'ترجم إلى كل اللغات'}
+        </Button>
+      </CardContent>
+    </Card>
 
-.fireworks {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  background: url('https://media.giphy.com/media/3o6ZsYm5wX9FptZbak/giphy.gif') center/cover no-repeat;
-  opacity: 0;
-  transition: opacity 0.7s ease;
-  z-index: 999;
-}
+    {translations.length > 0 && (
+      <div className="grid md:grid-cols-2 gap-4 mt-6">
+        {translations.map((t, idx) => (
+          <motion.div key={idx} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.1 }}>
+            <Card className="bg-[#202034] border border-indigo-500 rounded-xl">
+              <CardContent className="p-4">
+                <h2 className="text-xl font-semibold mb-2 text-indigo-300">{t.lang}</h2>
+                <p className="text-white text-base leading-relaxed">{t.translation}</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </div>
+    )}
 
-footer {
-  position: absolute;
-  bottom: 10px;
-  font-size: 0.9em;
-}
+    <div className="mt-10 flex flex-col items-center space-y-4">
+      <Button variant="outline" className="text-indigo-300 border-indigo-500">
+        <Camera className="mr-2" /> ترجمة من صورة (قريبًا)
+      </Button>
+    </div>
 
-  </style>
-</head>
-<body>
-  <h1>🌹 الوردة الحمراء</h1>
-  <div class="timer" id="timer">00:00</div>
-  <div class="controls">
-    <button onclick="startCustomTimer()">اختار وقتك</button>
-    <button onclick="startRandomTimer()">خلي الوردة تختار</button>
+    <footer className="mt-10 text-center text-sm text-indigo-300">
+      Made by <span className="font-semibold">Omar Alhlal</span> — Instagram: <a href="https://instagram.com/wh3.t" className="underline hover:text-indigo-400" target="_blank" rel="noopener noreferrer">@wh3.t</a>
+    </footer>
   </div>
-  <div class="fireworks" id="fireworks"></div>
-  <footer>Made by Omar Alhlal | Instagram: <a href="https://instagram.com/wh3.t" style="color: #f88;">@wh3.t</a></footer>  <script>
-    let timerInterval;
-    let timeLeft = 0;
-    let tabHiddenTime = null;
-    const rose = document.createElement('div');
-    rose.classList.add('rose');
-    document.body.insertBefore(rose, document.querySelector('.timer'));
-    const timerDisplay = document.getElementById("timer");
-    const words = [
-      "وينك! 😡",
-      "ليش طلعت؟ 🌪️",
-      "الوردة زعلت 😭",
-      "كنت محتاجك! 🌹",
-      "هذا مش عدل! 💔",
-      "راجع بسرعة 😤",
-      "مو هيك الاتفاق! 😡",
-      "انا تعبت منك 😢",
-      "ليش تعمل هيك؟ 😞",
-      "انت اناني! 💢",
-      "اهملتني! 😢",
-      "خنت ثقتي 😔",
-      "ما كنت اتوقع منك هيك 😢",
-      "ارجعلي 😭",
-      "كل مرة نفس الشي؟ 💔",
-      "شكلي كنت غلطانة فيك 😩",
-      "وين الوفا؟ 💀",
-      "خلاص الوردة ماتت 😵",
-      "انتهى الامل فيك 💔",
-      "الى اللقاء يا خائن 💀"
-    ];
+</main>
 
-    function startCustomTimer() {
-      let minutes = prompt("كم عدد الدقائق؟");
-      if (minutes && !isNaN(minutes)) {
-        startTimer(parseInt(minutes) * 60);
-      }
-    }
+); }
 
-    function startRandomTimer() {
-      let min = 15 * 60;
-      let max = 90 * 60;
-      let randomSeconds = Math.floor(Math.random() * (max - min + 1)) + min;
-      startTimer(randomSeconds);
-    }
-
-    function startTimer(seconds) {
-      clearInterval(timerInterval);
-      timeLeft = seconds;
-      updateDisplay();
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        updateDisplay();
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          celebrate();
-        }
-      }, 1000);
-    }
-
-    function updateDisplay() {
-      let mins = Math.floor(timeLeft / 60);
-      let secs = timeLeft % 60;
-      timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-    }
-
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden && timeLeft > 0) {
-        rose.classList.add("dead");
-        alert(words[Math.floor(Math.random() * words.length)]);
-      } else if (!document.hidden && timeLeft > 0) {
-        rose.classList.remove("dead");
-      }
-    });
-
-    function celebrate() {
-      const fireworks = document.getElementById("fireworks");
-      fireworks.style.opacity = 1;
-      setTimeout(() => {
-        fireworks.style.opacity = 0;
-        alert("🎉 مبروك! انهيت الوقت والوردة فرحانة فيك! 🌹");
-      }, 4000);
-    }
-  </script></body>
-</html>
